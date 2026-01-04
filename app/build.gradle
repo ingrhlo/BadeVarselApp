@@ -1,0 +1,133 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+
+    //serializer
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.10'
+
+    //To hide API key
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+
+    //Dagger-Hilt
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+
+    //Parcelize
+    id 'kotlin-parcelize'
+}
+
+secrets {
+    defaultPropertiesFileName = 'local.defaults.properties'
+}
+
+// Allow references to generated code - Dagger-hilt
+kapt {
+    correctErrorTypes true
+}
+
+//Dagger-hilt
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.dagger.hilt.android'
+
+android {
+    namespace 'com.example.badevarselappen'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.badevarselappen"
+        minSdk 26 //Changed from 23
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        //Changed for running dagger-hilt-testing
+        testInstrumentationRunner "com.example.badevarselappen.TestRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+        dataBinding true
+        viewBinding true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.0'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.activity:activity-compose:1.6.1'
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha11'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.test.ext:junit-ktx:1.1.5'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+
+    //ktor
+    var ktor_version = "2.2.4"
+    implementation "io.ktor:ktor-client-content-negotiation:$ktor_version"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
+    implementation "io.ktor:ktor-client-cio:$ktor_version" //CIO http-client
+
+    //Ktor testing
+    testImplementation "io.ktor:ktor-client-mock:$ktor_version"
+
+    //Stopped "Failed to load class org.slf4j.impl.StaticLoggerBinder"
+    implementation 'org.slf4j:slf4j-simple:1.6.1'
+
+    //Dagger-Hilt
+    var dagger_hilt_version = "2.45"
+    implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$dagger_hilt_version"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-compose:2.5.3"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+
+    //Room database
+    def room_version = "2.5.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    //google maps
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.maps.android:maps-compose:2.0.0'
+
+    //For testing dagger-hilt. Also needed to run tests on android, seeing as app is using hilt.
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$dagger_hilt_version"
+}
